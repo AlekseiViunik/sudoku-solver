@@ -4,14 +4,16 @@ from time import process_time
 from os.path import join, abspath 
 
 
-task_path = join('.', 'Data', 'sudoku3.txt')
-task_path = abspath(task_path)
+TASK_PATH = join('.', 'Data', 'sudoku3.txt')
+TASK_PATH = abspath(TASK_PATH)
 
 BLOCK_DIMENSION = 3
 SUDO_DIMENSION = 9
 
 
 def solve(sudo):
+    '''Calls solution function (solve_step) for current sudoku. 
+    Returns solved sudoku.'''
     sol = [[y for y in x] for x in sudo]
     if solve_step(sol):
         return sol
@@ -19,7 +21,7 @@ def solve(sudo):
 def solve_step(solution):
     '''Runs through the sudoku and fills cells which have only one
     solution. If it doesn't any one-solution cell, it calls a recursion 
-    for the min_pos cell.'''
+    for the min_pos cell. Returns solved sudoku or None.'''
     while True:
         min_pos = None        # A cell which have min amount of possible values 
         for row_index in range(SUDO_DIMENSION):
@@ -89,6 +91,15 @@ def print_sudoku(s):
         if k % 3 == 2:
             print('+-------+-------+-------+')
 
+def sudoku_conversion(string_sudoku):
+    ''' Get string as an argument. It contains 81 numbers from 0 to 9. 
+    Returns list of 9 lists with 9 numbers inside.'''
+    sodoku = [
+        [*map(
+            int, string_sudoku[i:i+SUDO_DIMENSION]
+        )] for i in range(0, SUDO_DIMENSION**2, SUDO_DIMENSION)
+    ]
+    return sodoku
 
 sudo = [
     [8, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -104,22 +115,26 @@ sudo = [
     [0, 9, 0, 0, 0, 0, 4, 0, 0],
 ]
 
-with open(task_path, 'rt', encoding='UTF-8') as source:
+with open(TASK_PATH, 'rt', encoding='UTF-8') as source:
     for line in source:
-        print(line)
+        line = line.strip()
+        if len(line) == 81:
+            print(line)
+            sudo_list = sudoku_conversion(line)
+            print_sudoku(sudo_list)
 
 
 
 
 
-print_sudoku(sudo)
-time_start = process_time()
-result = solve(sudo)
-time_solve = process_time() - time_start
-if result:
-    solve_step(sudo)
-    print_sudoku(result)
-    print(f'Sudoku has solved for {time_solve} sec.')
-else:
-    print(f'Sudoku has not solved for {time_solve} sec.')
-print('END')
+#print_sudoku(sudo)
+#time_start = process_time()
+#result = solve(sudo)
+#time_solve = process_time() - time_start
+#if result:
+#    solve_step(sudo)
+#    print_sudoku(result)
+#    print(f'Sudoku has solved for {time_solve} sec.')
+#else:
+#    print(f'Sudoku has not solved for {time_solve} sec.')
+#print('END')
