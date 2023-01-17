@@ -11,6 +11,6 @@ in readable form.
 ```
 
 ## Running project
-Clone repository.
-Using a 'cd' command go to 'src' folder.
-run 'sudoku.txt' file
+- Clone repository.
+- Using a 'cd' command go to 'src' folder.
+- Run 'sudoku.txt' file.
