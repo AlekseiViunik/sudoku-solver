@@ -1,11 +1,20 @@
 
+import sys
 from copy import deepcopy
 from time import process_time
 from os.path import join, abspath 
 
 
-TASK_PATH = join('.', 'Data', 'sudoku3.txt')
+FILE_NAME = 'sudoku100.txt'
+NEW_FILE_NAME = 'sudoku_solved.txt'
+FOLDER_PATH = join('..', 'Data')
+
+
+TASK_PATH = join(FOLDER_PATH, FILE_NAME)
 TASK_PATH = abspath(TASK_PATH)
+
+SOLVE_PATH = join(FOLDER_PATH, NEW_FILE_NAME)
+SOLVE_PATH = abspath(SOLVE_PATH)
 
 BLOCK_DIMENSION = 3
 SUDO_DIMENSION = 9
@@ -81,15 +90,16 @@ def get_possible_value(row_index, column_index, sudo):
     result -= get_block_value(row_index, column_index, sudo)
     return result
 
-def print_sudoku(s):
-    '''Makes the output sudoku readable.'''
-    print('+-------+-------+-------+')
+def print_sudoku(s, dst=sys.stdout):
+    '''Makes the output sudoku readable and writes it to destination file.
+    If 'dst' is not given as argument, it prints the result as usual.'''
+    print('+-------+-------+-------+', file=dst)
     for k in range(SUDO_DIMENSION):
         print('|', s[k][0], s[k][1], s[k][2], '|',
                    s[k][3], s[k][4], s[k][5], '|',
-                   s[k][6], s[k][7], s[k][8], '|',)
+                   s[k][6], s[k][7], s[k][8], '|', file=dst)
         if k % 3 == 2:
-            print('+-------+-------+-------+')
+            print('+-------+-------+-------+', file=dst)
 
 def sudoku_conversion(string_sudoku):
     ''' Get string as an argument. It contains 81 numbers from 0 to 9. 
@@ -101,40 +111,34 @@ def sudoku_conversion(string_sudoku):
     ]
     return sodoku
 
-sudo = [
-    [8, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 3, 6, 0, 0, 0, 0, 0],
-    [0, 7, 0, 0, 9, 0, 2, 0, 0],
-
-    [0, 5, 0, 0, 0, 7, 0, 0, 0],
-    [0, 0, 0, 0, 4, 5, 7, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 3, 0],
-
-    [0, 0, 1, 0, 0, 0, 0, 6, 8],
-    [0, 0, 8, 5, 0, 0, 0, 1, 0],
-    [0, 9, 0, 0, 0, 0, 4, 0, 0],
-]
-
-with open(TASK_PATH, 'rt', encoding='UTF-8') as source:
-    for line in source:
-        line = line.strip()
-        if len(line) == 81:
-            print(line)
-            sudo_list = sudoku_conversion(line)
-            print_sudoku(sudo_list)
-
-
-
-
-
-#print_sudoku(sudo)
-#time_start = process_time()
-#result = solve(sudo)
-#time_solve = process_time() - time_start
-#if result:
-#    solve_step(sudo)
-#    print_sudoku(result)
-#    print(f'Sudoku has solved for {time_solve} sec.')
-#else:
-#    print(f'Sudoku has not solved for {time_solve} sec.')
-#print('END')
+with open(SOLVE_PATH, 'wt', encoding='UTF-8') as destination:
+    with open(TASK_PATH, 'rt', encoding='UTF-8') as source:
+        n = 0   # Counter for sudoku's number
+        time_all_start = process_time()
+        for line in source:
+            line = line.strip()
+            if len(line) == 81:
+                n += 1
+                sudo_list = sudoku_conversion(line)
+                print('*'*50, file = destination)
+                print('Task is:', file=destination)
+                print_sudoku(sudo_list, dst=destination)
+                time_start = process_time()
+                result = solve(sudo_list)
+                time_solve = process_time() - time_start
+                if result:
+                    print('Solution is:', file=destination)
+                    print_sudoku(result, dst=destination)
+                    solve_mes = f'Sudoku {n} has solved for {time_solve}sec.'
+                    print(solve_mes)
+                    print(solve_mes + '\n', file=destination)
+                else:
+                    unsolved_mes = (f'Sudoku {n:3} has not solved for '
+                                    f'{time_solve}sec.')
+                    print(unsolved_mes)
+                    print(unsolved_mes + '\n', file=destination)
+        time_all = process_time() - time_all_start
+        message = f'All sudoku has been solved for {time_all}sec'
+        print(message)
+        print(message, file=destination)
+print('END')
