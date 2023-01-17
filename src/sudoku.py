@@ -1,14 +1,14 @@
 
 import sys
+
 from copy import deepcopy
 from time import process_time
-from os.path import join, abspath 
+from os.path import join, abspath
 
 
 FILE_NAME = 'sudoku100.txt'
 NEW_FILE_NAME = 'sudoku_solved.txt'
 FOLDER_PATH = join('..', 'Data')
-
 
 TASK_PATH = join(FOLDER_PATH, FILE_NAME)
 TASK_PATH = abspath(TASK_PATH)
@@ -21,18 +21,19 @@ SUDO_DIMENSION = 9
 
 
 def solve(sudo):
-    '''Calls solution function (solve_step) for current sudoku. 
+    '''Calls solution function (solve_step) for current sudoku.
     Returns solved sudoku.'''
     sol = [[y for y in x] for x in sudo]
     if solve_step(sol):
         return sol
 
+
 def solve_step(solution):
     '''Runs through the sudoku and fills cells which have only one
-    solution. If it doesn't any one-solution cell, it calls a recursion 
+    solution. If it doesn't any one-solution cell, it calls a recursion
     for the min_pos cell. Returns solved sudoku or None.'''
     while True:
-        min_pos = None        # A cell which have min amount of possible values 
+        min_pos = None        # A cell which have min amount of possible values
         for row_index in range(SUDO_DIMENSION):
             for column_index in range(SUDO_DIMENSION):
                 if solution[row_index][column_index]:
@@ -49,7 +50,7 @@ def solve_step(solution):
                     min_pos = (row_index, column_index), pos_value
         if not min_pos:
             return True
-        elif len(min_pos[1]) >=2:
+        elif len(min_pos[1]) >= 2:
             break
     (row, column), values = min_pos
     for value in values:
@@ -62,15 +63,15 @@ def solve_step(solution):
             return True
 
 
-
-
 def get_row_value(row_index, sudo):
     '''For each row returns which numbers it has.'''
     return set(sudo[row_index])
 
+
 def get_column_value(column_index, sudo):
     '''For each column returns which numbers it has.'''
-    return {line[column_index] for line in sudo} # generator expression
+    return {line[column_index] for line in sudo}
+
 
 def get_block_value(row_index, column_index, sudo):
     '''For each block 3x3 returns which numbers it has.'''
@@ -82,6 +83,7 @@ def get_block_value(row_index, column_index, sudo):
         for y in range(BLOCK_DIMENSION)
     }
 
+
 def get_possible_value(row_index, column_index, sudo):
     '''For current cell returns possible values.'''
     result = {1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -90,19 +92,21 @@ def get_possible_value(row_index, column_index, sudo):
     result -= get_block_value(row_index, column_index, sudo)
     return result
 
+
 def print_sudoku(s, dst=sys.stdout):
     '''Makes the output sudoku readable and writes it to destination file.
     If 'dst' is not given as argument, it prints the result as usual.'''
     print('+-------+-------+-------+', file=dst)
     for k in range(SUDO_DIMENSION):
         print('|', s[k][0], s[k][1], s[k][2], '|',
-                   s[k][3], s[k][4], s[k][5], '|',
-                   s[k][6], s[k][7], s[k][8], '|', file=dst)
+              s[k][3], s[k][4], s[k][5], '|',
+              s[k][6], s[k][7], s[k][8], '|', file=dst)
         if k % 3 == 2:
             print('+-------+-------+-------+', file=dst)
 
+
 def sudoku_conversion(string_sudoku):
-    ''' Get string as an argument. It contains 81 numbers from 0 to 9. 
+    ''' Get string as an argument. It contains 81 numbers from 0 to 9.
     Returns list of 9 lists with 9 numbers inside.'''
     sodoku = [
         [*map(
@@ -110,6 +114,7 @@ def sudoku_conversion(string_sudoku):
         )] for i in range(0, SUDO_DIMENSION**2, SUDO_DIMENSION)
     ]
     return sodoku
+
 
 with open(SOLVE_PATH, 'wt', encoding='UTF-8') as destination:
     with open(TASK_PATH, 'rt', encoding='UTF-8') as source:
@@ -120,7 +125,7 @@ with open(SOLVE_PATH, 'wt', encoding='UTF-8') as destination:
             if len(line) == 81:
                 n += 1
                 sudo_list = sudoku_conversion(line)
-                print('*'*50, file = destination)
+                print('*'*50, file=destination)
                 print('Task is:', file=destination)
                 print_sudoku(sudo_list, dst=destination)
                 time_start = process_time()
