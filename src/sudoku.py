@@ -1,6 +1,11 @@
+
 from copy import deepcopy
 from time import process_time
+from os.path import join, abspath 
 
+
+task_path = join('.', 'Data', 'sudoku3.txt')
+task_path = abspath(task_path)
 
 BLOCK_DIMENSION = 3
 SUDO_DIMENSION = 9
@@ -13,7 +18,7 @@ def solve(sudo):
 
 def solve_step(solution):
     '''Runs through the sudoku and fills cells which have only one
-    solution. If it doesn't have that cells, it calls a recursion 
+    solution. If it doesn't any one-solution cell, it calls a recursion 
     for the min_pos cell.'''
     while True:
         min_pos = None        # A cell which have min amount of possible values 
@@ -74,7 +79,7 @@ def get_possible_value(row_index, column_index, sudo):
     result -= get_block_value(row_index, column_index, sudo)
     return result
 
-def pr_sudoku(s):
+def print_sudoku(s):
     '''Makes the output sudoku readable.'''
     print('+-------+-------+-------+')
     for k in range(SUDO_DIMENSION):
@@ -99,14 +104,21 @@ sudo = [
     [0, 9, 0, 0, 0, 0, 4, 0, 0],
 ]
 
+with open(task_path, 'rt', encoding='UTF-8') as source:
+    for line in source:
+        print(line)
 
-pr_sudoku(sudo)
+
+
+
+
+print_sudoku(sudo)
 time_start = process_time()
 result = solve(sudo)
 time_solve = process_time() - time_start
 if result:
     solve_step(sudo)
-    pr_sudoku(result)
+    print_sudoku(result)
     print(f'Sudoku has solved for {time_solve} sec.')
 else:
     print(f'Sudoku has not solved for {time_solve} sec.')
