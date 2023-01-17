@@ -13,4 +13,4 @@ in readable form.
 ## Running project
 - Clone repository.
 - Using a 'cd' command go to 'src' folder.
-- Run 'sudoku.txt' file.
+- Run 'sudoku.py' file.
