@@ -1,4 +1,4 @@
-# solving_sudoku
+# sudoku-solver
 ![Python version](https://img.shields.io/badge/python-3.7-yellow)
 
 ```
